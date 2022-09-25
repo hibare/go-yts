@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  yts-bot:
+    build:
+      context: .
+    container_name: go-yts
+    hostname: go-yts
+    env_file: app.env
+    volumes:
+        - go-yts:/data
+volumes:
+  go-yts:
