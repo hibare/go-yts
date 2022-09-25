@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  go-yts:
+    image: hibare/go-yts
+    container_name: go-yts
+    hostname: go-yts
+    restart: always
+    environment:
+      - SCHEDULE0 */4 * * *
+      - DATA_DIR=/data
+      - HISTORY_FILE=history.json
+    volumes:
+        - yts_data:/data
+volumes:
+  go-yts:
