@@ -6,7 +6,7 @@ services:
     hostname: go-yts
     restart: always
     environment:
-      - SCHEDULE0 */4 * * *
+      - SCHEDULE=0 */4 * * *
       - DATA_DIR=/data
       - HISTORY_FILE=history.json
     volumes:
