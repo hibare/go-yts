@@ -4,9 +4,8 @@ name: Nigtly Release
 # architectures and push all of them to Docker Hub and GitHub Container Registry.
 # Only trigger on semver shaped tags.
 on:
-  push:
-    tags:
-      - '*'
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   docker-image-publish-nightly:
