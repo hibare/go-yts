@@ -24,6 +24,7 @@ func Slack(webhook string, movies map[string]utils.Movie) {
 		req, err := http.NewRequest("POST", webhook, bytes.NewBuffer(jsonReq))
 		if err != nil {
 			log.Println(err)
+			continue
 		}
 		res, _ := http.DefaultClient.Do(req)
 		log.Printf("Slack notification status %v", res.StatusCode)

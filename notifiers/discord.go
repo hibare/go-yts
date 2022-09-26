@@ -45,7 +45,11 @@ func Discord(webhook string, movies map[string]utils.Movie) {
 		data.Embeds = append(data.Embeds, embed)
 
 		jsonReq, _ := json.Marshal(data)
-		req, _ := http.NewRequest("POST", webhook, bytes.NewBuffer(jsonReq))
+		req, err := http.NewRequest("POST", webhook, bytes.NewBuffer(jsonReq))
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 		req.Header.Add("Content-Type", "application/json")
 		res, _ := http.DefaultClient.Do(req)
 
