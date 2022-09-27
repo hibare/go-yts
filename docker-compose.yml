@@ -10,6 +10,6 @@ services:
       - DATA_DIR=/data
       - HISTORY_FILE=history.json
     volumes:
-        - yts_data:/data
+        - go-yts:/data
 volumes:
   go-yts:
