@@ -1,0 +1,12 @@
+{
+    "go.buildOnSave":"package",
+    "go.lintOnSave":"package",
+    "go.vetOnSave": "package",
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    "go.formatOnSave": true,
+    "go.formatTool": "default",
+    "window.zoomLevel": 0,
+    "gopls": {
+        "ui.semanticTokens": true
+    }
+}
