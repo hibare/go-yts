@@ -74,11 +74,19 @@ func ticker() {
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Referrer", "https://www.google.com/")
-		log.Println("Visiting", r.URL)
+		log.Println("Visiting URL:", r.URL)
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		log.Println("Finished", r.Request.URL)
+		log.Println("Finished URL:", r.Request.URL)
+	})
+
+	c.OnResponse(func(r *colly.Response) {
+		log.Println("visited URL:", r.Request.URL, "Status Code: ", r.StatusCode)
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		log.Println("Failed to load URL:", r.Request.URL, "Error:", err)
 	})
 
 	q, _ := queue.New(
