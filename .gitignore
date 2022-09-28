@@ -5,6 +5,7 @@
 # Project specific
 data/
 *.env
+tmp/
 
 # Binaries for programs and plugins
 *.exe
