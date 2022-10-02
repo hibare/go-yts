@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"net"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -18,6 +20,7 @@ var (
 	historyFile    string
 	slackWebhook   string
 	discordWebhook string
+	timeout        time.Duration
 )
 
 func init() {
@@ -33,6 +36,9 @@ func init() {
 	schedule = config.Schedule
 	slackWebhook = config.SlackWebhook
 	discordWebhook = config.DiscordWebhook
+	timeout = config.Timeout
+
+	timeout = timeout * time.Second
 }
 
 func ticker() {
@@ -45,6 +51,12 @@ func ticker() {
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
 		colly.IgnoreRobotsTxt(),
 	)
+	c.WithTransport(&http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout:   timeout,
+			DualStack: true,
+		}).DialContext,
+	})
 
 	c.OnHTML("#popular-downloads", func(e *colly.HTMLElement) {
 		temp := utils.Movie{}
@@ -121,6 +133,7 @@ func main() {
 	s.Cron(schedule).Do(ticker)
 	log.Println("Starting scheduler")
 	log.Printf("Cron %s\n", schedule)
+	log.Printf("Request Timeout %v\n", timeout)
 	log.Printf("Data directory %s\n", dataDir)
 	log.Printf("History file %s\n", historyFile)
 	s.StartBlocking()
