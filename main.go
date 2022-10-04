@@ -51,12 +51,15 @@ func ticker() {
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
 		colly.IgnoreRobotsTxt(),
 	)
+
 	c.WithTransport(&http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   timeout,
 			DualStack: true,
 		}).DialContext,
 	})
+
+	c.SetRequestTimeout(timeout)
 
 	c.OnHTML("#popular-downloads", func(e *colly.HTMLElement) {
 		temp := utils.Movie{}
@@ -108,6 +111,7 @@ func ticker() {
 	for _, url := range urls {
 		q.AddURL(url)
 	}
+
 	q.Run(c)
 
 	log.Printf("Scraped %d movies\n", len(movies))
