@@ -1,4 +1,4 @@
-package utils
+package history
 
 import (
 	"encoding/json"
@@ -7,12 +7,14 @@ import (
 	"log"
 	"os"
 	"path"
+
+	"github.com/hibare/go-yts/internal/shared"
 )
 
-func ReadHistory(dataDir, historyFile string) map[string]Movie {
+func ReadHistory(dataDir, historyFile string) map[string]shared.Movie {
 	log.Printf("Reading history file %v, %v\n", dataDir, historyFile)
 
-	history := map[string]Movie{}
+	history := map[string]shared.Movie{}
 
 	if _, err := os.Stat(dataDir); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(dataDir, os.ModePerm)
@@ -32,8 +34,8 @@ func ReadHistory(dataDir, historyFile string) map[string]Movie {
 	return history
 }
 
-func DiffHistory(data, history map[string]Movie) map[string]Movie {
-	result := map[string]Movie{}
+func DiffHistory(data, history map[string]shared.Movie) map[string]shared.Movie {
+	result := map[string]shared.Movie{}
 
 	for k, v := range data {
 		if _, ok := history[k]; ok {
@@ -45,7 +47,7 @@ func DiffHistory(data, history map[string]Movie) map[string]Movie {
 	return result
 }
 
-func WriteHistory(data, history map[string]Movie, dataDir, historyFile string) {
+func WriteHistory(data, history map[string]shared.Movie, dataDir, historyFile string) {
 
 	if len(data) == 0 {
 		return

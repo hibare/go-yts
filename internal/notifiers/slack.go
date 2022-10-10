@@ -7,14 +7,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/hibare/GoYTS/utils"
+	"github.com/hibare/go-yts/internal/shared"
 )
 
 type slackPayload struct {
 	Text string `json:"text"`
 }
 
-func Slack(webhook string, movies map[string]utils.Movie) {
+func Slack(webhook string, movies map[string]shared.Movie) {
 
 	for k, v := range movies {
 		log.Printf("Sending Slack notification for %s\n", k)

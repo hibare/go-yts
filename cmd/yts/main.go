@@ -10,8 +10,10 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/queue"
-	"github.com/hibare/GoYTS/notifiers"
-	"github.com/hibare/GoYTS/utils"
+	"github.com/hibare/go-yts/internal/config"
+	"github.com/hibare/go-yts/internal/history"
+	"github.com/hibare/go-yts/internal/notifiers"
+	"github.com/hibare/go-yts/internal/shared"
 )
 
 var (
@@ -27,7 +29,7 @@ func init() {
 	// to change the flags on the default logger
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	config, err := utils.LoadConfig(".")
+	config, err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config: ", err)
 	}
@@ -44,7 +46,7 @@ func init() {
 func ticker() {
 	log.Println("[Start] Scraper task")
 
-	movies := map[string]utils.Movie{}
+	movies := map[string]shared.Movie{}
 	urls := []string{"https://yts.mx/", "https://wvw.yts.vc/yify/", "https://yts.lt/"}
 
 	c := colly.NewCollector(
@@ -62,7 +64,7 @@ func ticker() {
 	c.SetRequestTimeout(timeout)
 
 	c.OnHTML("#popular-downloads", func(e *colly.HTMLElement) {
-		temp := utils.Movie{}
+		temp := shared.Movie{}
 		e.ForEach("div .browse-movie-wrap", func(_ int, el *colly.HTMLElement) {
 			temp.Link = el.ChildAttr(".browse-movie-link", "href")
 			temp.TimeStamp = time.Now()
@@ -116,10 +118,10 @@ func ticker() {
 
 	log.Printf("Scraped %d movies\n", len(movies))
 
-	history := utils.ReadHistory(dataDir, historyFile)
-	diff := utils.DiffHistory(movies, history)
+	h := history.ReadHistory(dataDir, historyFile)
+	diff := history.DiffHistory(movies, h)
 	log.Printf("Found %d new movies", len(diff))
-	utils.WriteHistory(diff, history, dataDir, historyFile)
+	history.WriteHistory(diff, h, dataDir, historyFile)
 
 	if len(slackWebhook) > 0 {
 		notifiers.Slack(slackWebhook, diff)

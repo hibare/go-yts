@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/hibare/GoYTS/utils"
+	"github.com/hibare/go-yts/internal/shared"
 )
 
 type embedImage struct {
@@ -28,7 +28,7 @@ type discordPayload struct {
 	Embeds    []embed `json:"embeds"`
 }
 
-func Discord(webhook string, movies map[string]utils.Movie) {
+func Discord(webhook string, movies map[string]shared.Movie) {
 	for k, v := range movies {
 		log.Printf("Sending Discord notification for %s\n", k)
 
