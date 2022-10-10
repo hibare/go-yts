@@ -10,7 +10,7 @@ RUN apk --update add --no-cache ca-certificates openssl git tzdata && \
 
 COPY . /src/
 
-RUN CGO_ENABLED=0 go build -o /bin/go_yts
+RUN CGO_ENABLED=0 go build -o /bin/go_yts ./cmd/yts/main.go
 
 # Generate final image
 FROM scratch

@@ -1,13 +1,7 @@
 version: "3.7"
 services:
   go-yts:
-    image: cosmtrek/air
+    build: .
     container_name: go-yts
-    working_dir: /app
     hostname: go-yts
     env_file: docker.env
-    volumes:
-        - go-yts:/data
-        - $PWD:/app
-volumes:
-  go-yts:

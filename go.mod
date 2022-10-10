@@ -1,4 +1,4 @@
-module github.com/hibare/GoYTS
+module github.com/hibare/go-yts
 
 go 1.19
 
