@@ -22,5 +22,6 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
+          workdir: ./cmd/yts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
