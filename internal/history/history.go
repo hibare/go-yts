@@ -3,7 +3,6 @@ package history
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -24,7 +23,7 @@ func ReadHistory(dataDir, historyFile string) map[string]shared.Movie {
 		}
 	}
 
-	file, err := ioutil.ReadFile(path.Join(dataDir, historyFile))
+	file, err := os.ReadFile(path.Join(dataDir, historyFile))
 	if err != nil {
 		log.Println(err)
 		return history
@@ -66,5 +65,5 @@ func WriteHistory(data, history map[string]shared.Movie, dataDir, historyFile st
 	}
 
 	jsonString, _ := json.Marshal(history)
-	ioutil.WriteFile(path.Join(dataDir, historyFile), jsonString, os.ModePerm)
+	os.WriteFile(path.Join(dataDir, historyFile), jsonString, os.ModePerm)
 }
