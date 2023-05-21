@@ -3,7 +3,7 @@ module github.com/hibare/go-yts
 go 1.19
 
 require (
-	github.com/go-co-op/gocron v1.23.0
+	github.com/go-co-op/gocron v1.27.1
 	github.com/gocolly/colly v1.2.0
 	github.com/spf13/viper v1.15.0
 )
@@ -31,6 +31,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
