@@ -47,7 +47,7 @@ func ticker() {
 	log.Println("[Start] Scraper task")
 
 	movies := map[string]shared.Movie{}
-	urls := []string{"https://yts.mx/", "https://wvw.yts.vc/yify/", "https://yts.lt/"}
+	urls := []string{"https://yts.mx/", "https://yts.autos/", "https://yts.rs/", "https://yts.lt/", "https://yts.do/"}
 
 	c := colly.NewCollector(
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
