@@ -15,6 +15,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
+	ref, err := url.Parse(refUrl)
+	if err != nil {
+		return "", err
+	}
+
+	u := baseUrl.ResolveReference(ref)
+
+	return u.String(), nil
+}
+
 func ticker() {
 	log.Info("[Start] Scraper task")
 
@@ -38,24 +49,24 @@ func ticker() {
 	c.OnHTML("#popular-downloads", func(e *colly.HTMLElement) {
 		temp := history.Movie{}
 		e.ForEach("div .browse-movie-wrap", func(_ int, el *colly.HTMLElement) {
+			var err error
 			temp.Link = el.ChildAttr(".browse-movie-link", "href")
 			temp.TimeStamp = time.Now()
 			temp.Title = el.ChildText(".browse-movie-title")
 			temp.Year = el.ChildText(".browse-movie-year")
 			temp.CoverImage = el.ChildAttr("img", "src")
 
-			base, err := url.Parse(temp.Link)
+			temp.Link, err = ConstructURL(e.Request.URL, temp.Link)
 			if err != nil {
-				log.Fatal(err)
+				log.Error(err)
+				return
 			}
 
-			ref, err := url.Parse(temp.CoverImage)
+			temp.CoverImage, err = ConstructURL(e.Request.URL, temp.CoverImage)
 			if err != nil {
-				log.Fatal(err)
+				log.Error(err)
+				return
 			}
-
-			u := base.ResolveReference(ref)
-			temp.CoverImage = u.String()
 
 			movies[temp.Title] = temp
 		})
