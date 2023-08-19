@@ -52,17 +52,15 @@ volumes:
 
 ## Environment Variables
 
-| Variable        | Description                                         | Default Value  |
-| --------------- | --------------------------------------------------- | -------------- |
-| SCHEDULE        | Internal cron schedule. Uses standard cron notation | 0 \/4 \* \* \* |
-| DATA_DIR        | Directory to store history file                     | /data          |
-| HISTORY_FILE    | History filename                                    | history.json   |
-| TIMEOUT         | Request timeout value for scrapper                  | 60 Seconds     |
-| SLACK_WEBHOOK   | Slack notification webhook                          | -              |
-| DISCORD_WEBHOOK | Discord notification webhook                        | -              |
+| Variable                 | Description                                         | Default Value  |
+| ------------------------ | --------------------------------------------------- | -------------- |
+| SCHEDULE                 | Internal cron schedule. Uses standard cron notation | 0 \/4 \* \* \* |
+| DATA_DIR                 | Directory to store history file                     | /data          |
+| HISTORY_FILE             | History filename                                    | history.json   |
+| HTTP_REQUEST_TIMEOUT     | Request timeout value for scrapper                  | 60 Seconds     |
+| NOTIFIER_DISCORD_WEBHOOK | Discord notification webhook                        | -              |
+| NOTIFIER_DISCORD_ENABLED | Discord notification status                         | false          |
 
 ## Notifications
 
-Currently, only Slack and Discord are supported as notification destinations.
-
-Configure Slack & Discord notifications using environment variables `SLACK_WEBHOOK` & `DISCORD_WEBHOOK` respectively.
+Currently, only Discord is supported as notification destinations.
