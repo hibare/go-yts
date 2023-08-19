@@ -5,13 +5,12 @@ name: Docker image build test
 # Only trigger on semver shaped tags.
 on:
   pull_request:
-      # The branches below must be a subset of the branches above
+    # The branches below must be a subset of the branches above
     branches:
-      - 'main'
+      - "main"
     paths-ignore:
-      - '**/README.md'
-      - '**/.github'
-
+      - "**/README.md"
+      - "**/.github"
 
 jobs:
   docker-image-build-test:
@@ -19,6 +18,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "stable"
+
+      - name: Go Test
+        run: make test
 
       - name: Docker meta
         id: meta
