@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -13,40 +12,13 @@ import (
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/history"
 	"github.com/hibare/go-yts/internal/notifiers"
-	"github.com/hibare/go-yts/internal/shared"
+	log "github.com/sirupsen/logrus"
 )
-
-var (
-	schedule       string
-	dataDir        string
-	historyFile    string
-	slackWebhook   string
-	discordWebhook string
-	timeout        time.Duration
-)
-
-func init() {
-	// to change the flags on the default logger
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
-	config, err := config.LoadConfig(".")
-	if err != nil {
-		log.Fatal("cannot load config: ", err)
-	}
-	dataDir = config.DataDir
-	historyFile = config.HistoryFile
-	schedule = config.Schedule
-	slackWebhook = config.SlackWebhook
-	discordWebhook = config.DiscordWebhook
-	timeout = config.Timeout
-
-	timeout = timeout * time.Second
-}
 
 func ticker() {
-	log.Println("[Start] Scraper task")
+	log.Info("[Start] Scraper task")
 
-	movies := map[string]shared.Movie{}
+	movies := history.Movies{}
 	urls := []string{"https://yts.mx/", "https://yts.autos/", "https://yts.rs/", "https://yts.lt/", "https://yts.do/"}
 
 	c := colly.NewCollector(
@@ -56,15 +28,15 @@ func ticker() {
 
 	c.WithTransport(&http.Transport{
 		DialContext: (&net.Dialer{
-			Timeout:   timeout,
+			Timeout:   config.Current.HTTPConfig.RequestTimeout,
 			DualStack: true,
 		}).DialContext,
 	})
 
-	c.SetRequestTimeout(timeout)
+	c.SetRequestTimeout(config.Current.HTTPConfig.RequestTimeout)
 
 	c.OnHTML("#popular-downloads", func(e *colly.HTMLElement) {
-		temp := shared.Movie{}
+		temp := history.Movie{}
 		e.ForEach("div .browse-movie-wrap", func(_ int, el *colly.HTMLElement) {
 			temp.Link = el.ChildAttr(".browse-movie-link", "href")
 			temp.TimeStamp = time.Now()
@@ -91,19 +63,19 @@ func ticker() {
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Referrer", "https://www.google.com/")
-		log.Println("Visiting URL:", r.URL)
+		log.Infof("Visiting URL: %s", r.URL.String())
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		log.Println("Finished URL:", r.Request.URL)
+		log.Infof("Finished URL: %s", r.Request.URL.String())
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		log.Println("visited URL:", r.Request.URL, "Status Code: ", r.StatusCode)
+		log.Infof("visited URL: %s Status Code: %d", r.Request.URL.String(), r.StatusCode)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		log.Println("Failed to load URL:", r.Request.URL, "Error:", err)
+		log.Errorf("Failed to load URL: %s Error: %s", r.Request.URL.String(), err)
 	})
 
 	q, _ := queue.New(
@@ -116,31 +88,35 @@ func ticker() {
 
 	q.Run(c)
 
-	log.Printf("Scraped %d movies\n", len(movies))
+	log.Infof("Scraped %d movies", len(movies))
 
-	h := history.ReadHistory(dataDir, historyFile)
+	h := history.ReadHistory(config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
 	diff := history.DiffHistory(movies, h)
-	log.Printf("Found %d new movies", len(diff))
-	history.WriteHistory(diff, h, dataDir, historyFile)
+	history.WriteHistory(diff, h, config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
+	log.Infof("Found %d new movies", len(diff))
 
-	if len(slackWebhook) > 0 {
-		notifiers.Slack(slackWebhook, diff)
-	}
+	notifiers.Notify(diff)
 
-	if len(discordWebhook) > 0 {
-		notifiers.Discord(discordWebhook, diff)
-	}
-
-	log.Println("[End] Scraper task")
+	log.Info("[End] Scraper task")
 }
 
 func main() {
+	initLogger()
+	config.LoadConfig()
+	log.Infof("Cron %s", config.Current.Schedule)
+	log.Infof("Request Timeout %v", config.Current.HTTPConfig.RequestTimeout)
+	log.Infof("Data directory %s", config.Current.StorageConfig.DataDir)
+	log.Infof("History file %s", config.Current.StorageConfig.HistoryFile)
+	log.Info("Starting scheduler")
+
 	s := gocron.NewScheduler(time.UTC)
-	s.Cron(schedule).Do(ticker)
-	log.Println("Starting scheduler")
-	log.Printf("Cron %s\n", schedule)
-	log.Printf("Request Timeout %v\n", timeout)
-	log.Printf("Data directory %s\n", dataDir)
-	log.Printf("History file %s\n", historyFile)
+	s.Cron(config.Current.Schedule).Do(ticker)
 	s.StartBlocking()
+}
+
+func initLogger() {
+	log.SetLevel(log.InfoLevel)
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp: true,
+	})
 }
