@@ -3,7 +3,7 @@ module github.com/hibare/go-yts
 go 1.19
 
 require (
-	github.com/go-co-op/gocron v1.31.2
+	github.com/go-co-op/gocron v1.32.1
 	github.com/gocolly/colly v1.2.0
 	github.com/hibare/GoCommon/v2 v2.2.0
 	github.com/sirupsen/logrus v1.9.3
@@ -21,6 +21,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
