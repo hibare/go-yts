@@ -7,7 +7,7 @@ import (
 	"path"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type Movie struct {
@@ -30,23 +30,23 @@ func ensureDirExists(dirPath string) error {
 }
 
 func ReadHistory(dataDir, historyFile string) Movies {
-	log.Infof("Reading history file %v, %v\n", dataDir, historyFile)
+	log.Info().Msgf("Reading history file %s, %s", dataDir, historyFile)
 
 	history := Movies{}
 
 	if err := ensureDirExists(dataDir); err != nil {
-		log.Error("Failed to create directory:", err)
+		log.Error().Err(err).Msg("Failed to create directory")
 		return history
 	}
 
 	file, err := os.ReadFile(path.Join(dataDir, historyFile))
 	if err != nil {
-		log.Error("Failed to read history file:", err)
+		log.Error().Err(err).Msg("Failed to read history file")
 		return history
 	}
 
 	if err := json.Unmarshal(file, &history); err != nil {
-		log.Error("Failed to unmarshal history file:", err)
+		log.Error().Err(err).Msg("Failed to unmarshal history file")
 	}
 
 	return history
@@ -68,24 +68,24 @@ func WriteHistory(data, history Movies, dataDir, historyFile string) {
 	if len(data) == 0 {
 		return
 	}
-	log.Infof("Writing history file %v, %v\n", dataDir, historyFile)
+	log.Info().Msgf("Writing history file %s, %s\n", dataDir, historyFile)
 
 	for k, v := range data {
 		history[k] = v
 	}
 
 	if err := ensureDirExists(dataDir); err != nil {
-		log.Error("Failed to create directory:", err)
+		log.Error().Err(err).Msg("Failed to create directory")
 		return
 	}
 
 	jsonString, err := json.Marshal(history)
 	if err != nil {
-		log.Error("Failed to marshal history:", err)
+		log.Error().Err(err).Msg("Failed to marshal history")
 		return
 	}
 
 	if err := os.WriteFile(path.Join(dataDir, historyFile), jsonString, os.ModePerm); err != nil {
-		log.Error("Failed to write history file:", err)
+		log.Error().Err(err).Msg("Failed to write history file")
 	}
 }

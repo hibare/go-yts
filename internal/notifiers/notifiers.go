@@ -7,17 +7,17 @@ import (
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/constants"
 	"github.com/hibare/go-yts/internal/history"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func Discord(movies history.Movies) {
 	if !config.Current.NotifierConfig.Discord.Enabled {
-		log.Error("Notifier is disabled")
+		log.Warn().Msg("Notifier is disabled")
 		return
 	}
 
 	for k, v := range movies {
-		log.Infof("Sending Discord notification for %s\n", k)
+		log.Info().Msgf("Sending Discord notification for %s", k)
 
 		message := discord.Message{
 			Username:  constants.ProgramIdentifierFormatted,
@@ -36,7 +36,7 @@ func Discord(movies history.Movies) {
 		}
 
 		if err := message.Send(config.Current.NotifierConfig.Discord.Webhook); err != nil {
-			log.Error(err)
+			log.Error().Err(err)
 		}
 	}
 }
