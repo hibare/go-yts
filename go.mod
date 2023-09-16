@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/go-co-op/gocron v1.33.1
 	github.com/gocolly/colly v1.2.0
-	github.com/hibare/GoCommon/v2 v2.2.0
-	github.com/sirupsen/logrus v1.9.3
+	github.com/hibare/GoCommon/v2 v2.3.0
+	github.com/rs/zerolog v1.30.0
 	github.com/stretchr/testify v1.8.4
 )
 
@@ -24,6 +24,8 @@ require (
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect

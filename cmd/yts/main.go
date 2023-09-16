@@ -9,10 +9,11 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/queue"
+	commonLogger "github.com/hibare/GoCommon/v2/pkg/logger"
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/history"
 	"github.com/hibare/go-yts/internal/notifiers"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
@@ -27,7 +28,7 @@ func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
 }
 
 func ticker() {
-	log.Info("[Start] Scraper task")
+	log.Info().Msg("[Start] Scraper task")
 
 	movies := history.Movies{}
 	urls := []string{"https://yts.mx/", "https://yts.autos/", "https://yts.rs/", "https://yts.lt/", "https://yts.do/"}
@@ -58,13 +59,13 @@ func ticker() {
 
 			temp.Link, err = ConstructURL(e.Request.URL, temp.Link)
 			if err != nil {
-				log.Error(err)
+				log.Error().Err(err)
 				return
 			}
 
 			temp.CoverImage, err = ConstructURL(e.Request.URL, temp.CoverImage)
 			if err != nil {
-				log.Error(err)
+				log.Error().Err(err)
 				return
 			}
 
@@ -74,19 +75,19 @@ func ticker() {
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Referrer", "https://www.google.com/")
-		log.Infof("Visiting URL: %s", r.URL.String())
+		log.Info().Msgf("Visiting URL: %s", r.URL.String())
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		log.Infof("Finished URL: %s", r.Request.URL.String())
+		log.Info().Msgf("Finished URL: %s", r.Request.URL.String())
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		log.Infof("visited URL: %s Status Code: %d", r.Request.URL.String(), r.StatusCode)
+		log.Info().Msgf("visited URL: %s Status Code: %d", r.Request.URL.String(), r.StatusCode)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		log.Errorf("Failed to load URL: %s Error: %s", r.Request.URL.String(), err)
+		log.Error().Err(err).Msgf("Failed to load URL: %s", r.Request.URL.String())
 	})
 
 	q, _ := queue.New(
@@ -99,35 +100,28 @@ func ticker() {
 
 	q.Run(c)
 
-	log.Infof("Scraped %d movies", len(movies))
+	log.Info().Msgf("Scraped %d movies", len(movies))
 
 	h := history.ReadHistory(config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
 	diff := history.DiffHistory(movies, h)
 	history.WriteHistory(diff, h, config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
-	log.Infof("Found %d new movies", len(diff))
+	log.Info().Msgf("Found %d new movies", len(diff))
 
 	notifiers.Notify(diff)
 
-	log.Info("[End] Scraper task")
+	log.Info().Msg("[End] Scraper task")
 }
 
 func main() {
-	initLogger()
+	commonLogger.InitLogger()
 	config.LoadConfig()
-	log.Infof("Cron %s", config.Current.Schedule)
-	log.Infof("Request Timeout %v", config.Current.HTTPConfig.RequestTimeout)
-	log.Infof("Data directory %s", config.Current.StorageConfig.DataDir)
-	log.Infof("History file %s", config.Current.StorageConfig.HistoryFile)
-	log.Info("Starting scheduler")
+	log.Info().Msgf("Cron %s", config.Current.Schedule)
+	log.Info().Msgf("Request Timeout %v", config.Current.HTTPConfig.RequestTimeout)
+	log.Info().Msgf("Data directory %s", config.Current.StorageConfig.DataDir)
+	log.Info().Msgf("History file %s", config.Current.StorageConfig.HistoryFile)
+	log.Info().Msg("Starting scheduler")
 
 	s := gocron.NewScheduler(time.UTC)
 	s.Cron(config.Current.Schedule).Do(ticker)
 	s.StartBlocking()
-}
-
-func initLogger() {
-	log.SetLevel(log.InfoLevel)
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true,
-	})
 }

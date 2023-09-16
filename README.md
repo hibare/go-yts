@@ -60,6 +60,8 @@ volumes:
 | HTTP_REQUEST_TIMEOUT     | Request timeout value for scrapper                  | 60 Seconds     |
 | NOTIFIER_DISCORD_WEBHOOK | Discord notification webhook                        | -              |
 | NOTIFIER_DISCORD_ENABLED | Discord notification status                         | false          |
+| LOG_LEVEL                | Log Level (INFO, ERROR, WARN, DEBUG)                | INFO           |
+| LOG_MODE                 | Log mode (PRETTY, JSON)                             | PRETTY         |
 
 ## Notifications
 

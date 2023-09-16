@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	commonLogger "github.com/hibare/GoCommon/v2/pkg/logger"
 	"github.com/hibare/go-yts/internal/constants"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,6 +20,8 @@ func mockEnvVariables() {
 	os.Setenv("NOTIFIER_DISCORD_ENABLED", "false")
 	os.Setenv("NOTIFIER_DISCORD_WEBHOOK", "discord_webhook_url")
 	os.Setenv("HTTP_REQUEST_TIMEOUT", "5s")
+	os.Setenv("LOG_LEVEL", commonLogger.DefaultLoggerLevel)
+	os.Setenv("LOG_MODE", commonLogger.DefaultLoggerMode)
 }
 
 func TestLoadConfig(t *testing.T) {
@@ -41,6 +44,9 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "discord_webhook_url", Current.NotifierConfig.Discord.Webhook)
 
 	assert.Equal(t, 5*time.Second, Current.HTTPConfig.RequestTimeout)
+
+	assert.Equal(t, commonLogger.DefaultLoggerLevel, Current.LoggerConfig.Level)
+	assert.Equal(t, commonLogger.DefaultLoggerMode, Current.LoggerConfig.Mode)
 }
 
 func TestLoadConfigWithDefaults(t *testing.T) {
@@ -57,4 +63,8 @@ func TestLoadConfigWithDefaults(t *testing.T) {
 	assert.Equal(t, "", Current.NotifierConfig.Discord.Webhook)
 
 	assert.Equal(t, constants.DefaultRequestTimeout, Current.HTTPConfig.RequestTimeout)
+
+	assert.Equal(t, commonLogger.DefaultLoggerLevel, Current.LoggerConfig.Level)
+	assert.Equal(t, commonLogger.DefaultLoggerMode, Current.LoggerConfig.Mode)
+
 }
