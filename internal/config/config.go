@@ -83,6 +83,9 @@ func LoadConfig() {
 		log.Fatal().Str("mode", Current.LoggerConfig.Mode).Msg("Error invalid logger mode")
 	}
 
+	commonLogger.SetLoggingLevel(Current.LoggerConfig.Level)
+	commonLogger.SetLoggingMode(Current.LoggerConfig.Mode)
+
 	if Current.NotifierConfig.Discord.Webhook == "" {
 		Current.NotifierConfig.Discord.Enabled = false
 	}
