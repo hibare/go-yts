@@ -3,7 +3,7 @@ module github.com/hibare/go-yts
 go 1.19
 
 require (
-	github.com/go-co-op/gocron v1.33.1
+	github.com/go-co-op/gocron v1.34.2
 	github.com/gocolly/colly v1.2.0
 	github.com/hibare/GoCommon/v2 v2.3.0
 	github.com/rs/zerolog v1.30.0
