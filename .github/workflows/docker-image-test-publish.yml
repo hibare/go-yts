@@ -6,7 +6,6 @@ on:
       - "*"
     branches:
       - dev
-      - main
 
   pull_request:
     branches:
@@ -25,6 +24,8 @@ jobs:
       - name: Set Docker Tags
         id: set-docker-tags
         run: |
+          DOCKER_TAGS="unknown"
+
           if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/dev" ]; then
             DOCKER_TAGS="dev"
           else
