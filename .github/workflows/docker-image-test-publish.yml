@@ -65,14 +65,24 @@ jobs:
           echo "::set-output name=docker_tags::$DOCKER_TAGS"
         shell: bash
 
+      - name: Set Docker Image Names
+        id: set-docker-image-names
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            IMAGE_NAMES="hibare/go-yts"
+          else
+            IMAGE_NAMES="hibare/go-yts ghcr.io/hibare/go-yts"
+          fi
+
+          echo "::set-output name=docker_image_names::$IMAGE_NAMES"
+        shell: bash
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: |
-            hibare/go-yts
-            ghcr.io/hibare/go-yts
+          images: ${{ steps.set-docker-image-names.outputs.docker_image_names}}
           # generate Docker tags based on the following events/attributes
           tags: ${{ steps.set-docker-tags.outputs.docker_tags }}
 
