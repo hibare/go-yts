@@ -24,32 +24,19 @@ concurrency:
 
 jobs:
   artifacts-test-build-publish:
-    # Do not trigger this on dev branch push
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))}}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Goreleaser
+        uses: hibare/.github/github/shared-workflows/goreleaser@0962b9d76360405b3c4bf78f91424b7905bb03a8 # v0.3.0
         with:
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version-file: go.mod
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@7ec5c2b0c6cdda6e8bbb49444bc797dd33d74dd8 # v5.0.0
-        with:
-          distribution: goreleaser
-          version: latest
           args: ${{ github.event_name == 'pull_request' && 'release --skip=sign,publish --snapshot --clean' || 'release --clean' }}
-          workdir: ./cmd/yts
+          sign: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   docker-image-test-publish:
-    # Trigger on pull request, push to dev and tag creation
+    # Trigger on pull request, push to main and tag creation
     runs-on: ubuntu-latest
     permissions:
       contents: write
