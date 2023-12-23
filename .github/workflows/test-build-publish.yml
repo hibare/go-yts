@@ -32,6 +32,7 @@ jobs:
         with:
           args: ${{ github.event_name == 'pull_request' && 'release --skip=sign,publish --snapshot --clean' || 'release --clean' }}
           sign: false
+          workdir: ./cmd/yts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
