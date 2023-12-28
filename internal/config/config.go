@@ -1,12 +1,12 @@
 package config
 
 import (
+	"log"
 	"time"
 
 	"github.com/hibare/GoCommon/v2/pkg/env"
 	commonLogger "github.com/hibare/GoCommon/v2/pkg/logger"
 	"github.com/hibare/go-yts/internal/constants"
-	"github.com/rs/zerolog/log"
 )
 
 type HTTPConfig struct {
@@ -76,15 +76,14 @@ func LoadConfig() {
 	}
 
 	if !commonLogger.IsValidLogLevel(Current.LoggerConfig.Level) {
-		log.Fatal().Str("level", Current.LoggerConfig.Level).Msg("Error invalid logger level")
+		log.Fatalf("Error invalid logger level %s", Current.LoggerConfig.Level)
 	}
 
 	if !commonLogger.IsValidLogMode(Current.LoggerConfig.Mode) {
-		log.Fatal().Str("mode", Current.LoggerConfig.Mode).Msg("Error invalid logger mode")
+		log.Fatalf("Error invalid logger mode %s", Current.LoggerConfig.Mode)
 	}
 
-	commonLogger.SetLoggingLevel(Current.LoggerConfig.Level)
-	commonLogger.SetLoggingMode(Current.LoggerConfig.Mode)
+	commonLogger.InitLogger(&Current.LoggerConfig.Level, &Current.LoggerConfig.Mode)
 
 	if Current.NotifierConfig.Discord.Webhook == "" {
 		Current.NotifierConfig.Discord.Enabled = false
