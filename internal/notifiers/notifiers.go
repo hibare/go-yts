@@ -2,22 +2,22 @@ package notifiers
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/hibare/GoCommon/v2/pkg/notifiers/discord"
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/constants"
 	"github.com/hibare/go-yts/internal/history"
-	"github.com/rs/zerolog/log"
 )
 
 func Discord(movies history.Movies) {
 	if !config.Current.NotifierConfig.Discord.Enabled {
-		log.Warn().Msg("Notifier is disabled")
+		slog.Warn("Notifier is disabled")
 		return
 	}
 
 	for k, v := range movies {
-		log.Info().Msgf("Sending Discord notification for %s", k)
+		slog.Info("Sending Discord notification", "movie", k)
 
 		message := discord.Message{
 			Username:  constants.ProgramIdentifierFormatted,
@@ -36,7 +36,7 @@ func Discord(movies history.Movies) {
 		}
 
 		if err := message.Send(config.Current.NotifierConfig.Discord.Webhook); err != nil {
-			log.Error().Err(err)
+			slog.Error("Failed to send Discord notification", "error", err)
 		}
 	}
 }

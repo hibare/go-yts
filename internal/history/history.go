@@ -3,11 +3,10 @@ package history
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"os"
 	"path"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 type Movie struct {
@@ -30,23 +29,23 @@ func ensureDirExists(dirPath string) error {
 }
 
 func ReadHistory(dataDir, historyFile string) Movies {
-	log.Info().Msgf("Reading history file %s, %s", dataDir, historyFile)
+	slog.Info("Reading history file", "data_dir", dataDir, "history_file", historyFile)
 
 	history := Movies{}
 
 	if err := ensureDirExists(dataDir); err != nil {
-		log.Error().Err(err).Msg("Failed to create directory")
+		slog.Error("Failed to create directory", "error", err)
 		return history
 	}
 
 	file, err := os.ReadFile(path.Join(dataDir, historyFile))
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to read history file")
+		slog.Error("Failed to read history file", "error", err)
 		return history
 	}
 
 	if err := json.Unmarshal(file, &history); err != nil {
-		log.Error().Err(err).Msg("Failed to unmarshal history file")
+		slog.Error("Failed to unmarshal history file", "error", err)
 	}
 
 	return history
@@ -68,24 +67,24 @@ func WriteHistory(data, history Movies, dataDir, historyFile string) {
 	if len(data) == 0 {
 		return
 	}
-	log.Info().Msgf("Writing history file %s, %s\n", dataDir, historyFile)
+	slog.Info("Writing history file", "data_dir", dataDir, "history_file", historyFile)
 
 	for k, v := range data {
 		history[k] = v
 	}
 
 	if err := ensureDirExists(dataDir); err != nil {
-		log.Error().Err(err).Msg("Failed to create directory")
+		slog.Info("Failed to create directory", "error", err)
 		return
 	}
 
 	jsonString, err := json.Marshal(history)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal history")
+		slog.Error("Failed to marshal history", "error", err)
 		return
 	}
 
 	if err := os.WriteFile(path.Join(dataDir, historyFile), jsonString, os.ModePerm); err != nil {
-		log.Error().Err(err).Msg("Failed to write history file")
+		slog.Error("Failed to write history file", "error", err)
 	}
 }

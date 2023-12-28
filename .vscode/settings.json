@@ -1,5 +1,4 @@
 {
-    "go.buildOnSave":"package",
     "go.lintOnSave":"package",
     "go.vetOnSave": "package",
     "go.useCodeSnippetsOnFunctionSuggest": true,
@@ -8,5 +7,11 @@
     "window.zoomLevel": 0,
     "gopls": {
         "ui.semanticTokens": true
-    }
+    },
+    "cSpell.words": [
+        "gocolly",
+        "gocron",
+        "gomod",
+        "hibare"
+    ]
 }

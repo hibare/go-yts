@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -13,7 +14,6 @@ import (
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/history"
 	"github.com/hibare/go-yts/internal/notifiers"
-	"github.com/rs/zerolog/log"
 )
 
 func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
@@ -28,7 +28,7 @@ func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
 }
 
 func ticker() {
-	log.Info().Msg("[Start] Scraper task")
+	slog.Info("[Start] Scraper task")
 
 	movies := history.Movies{}
 	urls := []string{"https://yts.mx/", "https://yts.autos/", "https://yts.rs/", "https://yts.lt/", "https://yts.do/"}
@@ -59,13 +59,13 @@ func ticker() {
 
 			temp.Link, err = ConstructURL(e.Request.URL, temp.Link)
 			if err != nil {
-				log.Error().Err(err)
+				slog.Error("Failed to construct URL", "error", err)
 				return
 			}
 
 			temp.CoverImage, err = ConstructURL(e.Request.URL, temp.CoverImage)
 			if err != nil {
-				log.Error().Err(err)
+				slog.Error("Failed to construct URL", "error", err)
 				return
 			}
 
@@ -75,19 +75,19 @@ func ticker() {
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Referrer", "https://www.google.com/")
-		log.Info().Msgf("Visiting URL: %s", r.URL.String())
+		slog.Info("Visiting URL", "url", r.URL.String())
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		log.Info().Msgf("Finished URL: %s", r.Request.URL.String())
+		slog.Info("Finished URL", "url", r.Request.URL.String())
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		log.Info().Msgf("visited URL: %s Status Code: %d", r.Request.URL.String(), r.StatusCode)
+		slog.Info("Finished URL", "url", r.Request.URL.String(), "status_code", r.StatusCode)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		log.Error().Err(err).Msgf("Failed to load URL: %s", r.Request.URL.String())
+		slog.Error("Failed to load URL", "url", r.Request.URL.String(), "error", err)
 	})
 
 	q, _ := queue.New(
@@ -100,26 +100,24 @@ func ticker() {
 
 	q.Run(c)
 
-	log.Info().Msgf("Scraped %d movies", len(movies))
+	slog.Info("Scraped movies", "total", len(movies))
 
 	h := history.ReadHistory(config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
 	diff := history.DiffHistory(movies, h)
 	history.WriteHistory(diff, h, config.Current.StorageConfig.DataDir, config.Current.StorageConfig.HistoryFile)
-	log.Info().Msgf("Found %d new movies", len(diff))
+	slog.Info("Found new movies", "total", len(diff))
 
 	notifiers.Notify(diff)
 
-	log.Info().Msg("[End] Scraper task")
+	slog.Info("[End] Scraper task")
 }
 
 func main() {
-	commonLogger.InitLogger()
+	commonLogger.InitDefaultLogger()
 	config.LoadConfig()
-	log.Info().Msgf("Cron %s", config.Current.Schedule)
-	log.Info().Msgf("Request Timeout %v", config.Current.HTTPConfig.RequestTimeout)
-	log.Info().Msgf("Data directory %s", config.Current.StorageConfig.DataDir)
-	log.Info().Msgf("History file %s", config.Current.StorageConfig.HistoryFile)
-	log.Info().Msg("Starting scheduler")
+	slog.Info("Config", "cron", config.Current.Schedule, "request_timeout", config.Current.HTTPConfig.RequestTimeout, "data_dir", config.Current.StorageConfig.DataDir, "history_file", config.Current.StorageConfig.HistoryFile, "history_file", config.Current.StorageConfig.HistoryFile)
+
+	slog.Info("Starting scheduler")
 
 	s := gocron.NewScheduler(time.UTC)
 	s.Cron(config.Current.Schedule).Do(ticker)
