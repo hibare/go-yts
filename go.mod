@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/gocolly/colly v1.2.0
-	github.com/hibare/GoCommon/v2 v2.7.0
+	github.com/hibare/GoCommon/v2 v2.8.0
 	github.com/stretchr/testify v1.8.4
 )
 
