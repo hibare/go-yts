@@ -1,4 +1,4 @@
-FROM golang:1.22.1-alpine AS base
+FROM golang:1.22.2-alpine AS base
 
 # Build main app
 FROM base AS build
