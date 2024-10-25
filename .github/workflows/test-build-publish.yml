@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Goreleaser
-        uses: hibare/.github/github/shared-workflows/goreleaser@3f2aca66510c1847daef4967f5ece127f648292b # v0.4.0
+        uses: hibare/.github/github/shared-workflows/goreleaser@038e5ef85c308f76e396c8a886a7ae31b8494367 # v0.6.0
         with:
           args: ${{ github.event_name == 'pull_request' && 'release --skip=sign,publish --snapshot --clean' || 'release --clean' }}
           sign: false
@@ -82,7 +82,7 @@ jobs:
         shell: bash
 
       - name: image-build-publish
-        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@3f2aca66510c1847daef4967f5ece127f648292b # v0.4.0
+        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@038e5ef85c308f76e396c8a886a7ae31b8494367 # v0.6.0
         with:
           image_names: ${{ steps.set-metadata.outputs.docker_image_names }}
           tags: ${{ steps.set-metadata.outputs.docker_tags }}
