@@ -12,16 +12,13 @@ import (
 
 // Mock environment variables for testing
 func mockEnvVariables() {
-	os.Setenv("SCHEDULE", "test_schedule")
-	os.Setenv("DATA_DIR", "/test/data/dir")
-	os.Setenv("HISTORY_FILE", "test_history.txt")
-	os.Setenv("NOTIFIER_SLACK_ENABLED", "true")
-	os.Setenv("NOTIFIER_SLACK_WEBHOOK", "slack_webhook_url")
-	os.Setenv("NOTIFIER_DISCORD_ENABLED", "false")
-	os.Setenv("NOTIFIER_DISCORD_WEBHOOK", "discord_webhook_url")
-	os.Setenv("HTTP_REQUEST_TIMEOUT", "5s")
-	os.Setenv("LOG_LEVEL", commonLogger.DefaultLoggerLevel)
-	os.Setenv("LOG_MODE", commonLogger.DefaultLoggerMode)
+	os.Setenv("GO_YTS_SCHEDULE", "test_schedule")
+	os.Setenv("GO_YTS_DATA_DIR", "/test/data/dir")
+	os.Setenv("GO_YTS_NOTIFIER_DISCORD_ENABLED", "false")
+	os.Setenv("GO_YTS_NOTIFIER_DISCORD_WEBHOOK", "discord_webhook_url")
+	os.Setenv("GO_YTS_HTTP_REQUEST_TIMEOUT", "5s")
+	os.Setenv("GO_YTS_LOG_LEVEL", commonLogger.DefaultLoggerLevel)
+	os.Setenv("GO_YTS_LOG_MODE", commonLogger.DefaultLoggerMode)
 }
 
 func TestLoadConfig(t *testing.T) {
@@ -35,10 +32,6 @@ func TestLoadConfig(t *testing.T) {
 
 	assert.Equal(t, "test_schedule", Current.Schedule)
 	assert.Equal(t, "/test/data/dir", Current.StorageConfig.DataDir)
-	assert.Equal(t, "test_history.txt", Current.StorageConfig.HistoryFile)
-
-	assert.True(t, Current.NotifierConfig.Slack.Enabled)
-	assert.Equal(t, "slack_webhook_url", Current.NotifierConfig.Slack.Webhook)
 
 	assert.False(t, Current.NotifierConfig.Discord.Enabled)
 	assert.Equal(t, "discord_webhook_url", Current.NotifierConfig.Discord.Webhook)
@@ -54,10 +47,6 @@ func TestLoadConfigWithDefaults(t *testing.T) {
 
 	assert.Equal(t, constants.DefaultSchedule, Current.Schedule)
 	assert.Equal(t, constants.DefaultDataDir, Current.StorageConfig.DataDir)
-	assert.Equal(t, constants.DefaultHistoryFilename, Current.StorageConfig.HistoryFile)
-
-	assert.False(t, Current.NotifierConfig.Slack.Enabled)
-	assert.Equal(t, "", Current.NotifierConfig.Slack.Webhook)
 
 	assert.False(t, Current.NotifierConfig.Discord.Enabled)
 	assert.Equal(t, "", Current.NotifierConfig.Discord.Webhook)

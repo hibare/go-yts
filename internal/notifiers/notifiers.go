@@ -1,23 +1,24 @@
 package notifiers
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
 	"github.com/hibare/GoCommon/v2/pkg/notifiers/discord"
 	"github.com/hibare/go-yts/internal/config"
 	"github.com/hibare/go-yts/internal/constants"
-	"github.com/hibare/go-yts/internal/history"
+	"github.com/hibare/go-yts/internal/db"
 )
 
-func Discord(movies history.Movies) {
+func Discord(ctx context.Context, movies []db.Movies) {
 	if !config.Current.NotifierConfig.Discord.Enabled {
-		slog.Warn("Notifier is disabled")
+		slog.WarnContext(ctx, "Notifier is disabled")
 		return
 	}
 
-	for k, v := range movies {
-		slog.Info("Sending Discord notification", "movie", k)
+	for _, v := range movies {
+		slog.InfoContext(ctx, "Sending Discord notification", "movie", v.Title)
 
 		message := discord.Message{
 			Username:  constants.ProgramIdentifierFormatted,
@@ -25,7 +26,7 @@ func Discord(movies history.Movies) {
 			AvatarURL: "https://i.imgur.com/4M34hi2.png",
 			Embeds: []discord.Embed{
 				{
-					Title:       fmt.Sprintf("%s (%s)", v.Title, v.Year),
+					Title:       fmt.Sprintf("%s (%d)", v.Title, v.Year),
 					Description: fmt.Sprintf("[View](%s)", v.Link),
 					Color:       15258703,
 					Image: discord.EmbedImage{
@@ -36,15 +37,17 @@ func Discord(movies history.Movies) {
 		}
 
 		if err := message.Send(config.Current.NotifierConfig.Discord.Webhook); err != nil {
-			slog.Error("Failed to send Discord notification", "error", err)
+			slog.ErrorContext(ctx, "Failed to send Discord notification", "error", err)
+		} else {
+			slog.InfoContext(ctx, "Discord notification sent", "movie", v.Title)
 		}
 	}
 }
 
-func Notify(movies history.Movies) {
+func Notify(ctx context.Context, movies []db.Movies) {
 	if len(movies) == 0 {
 		return
 	}
 
-	Discord(movies)
+	Discord(ctx, movies)
 }
