@@ -9,4 +9,5 @@ const (
 	DefaultHistoryFilename     = "history.json"
 	DefaultDataDir             = "/data"
 	DefaultSchedule            = "0 */4 * * *"
+	DefaultSQLiteDB            = "movies.db"
 )

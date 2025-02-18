@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS movies (
+    title VARCHAR(255) PRIMARY KEY,
+    link VARCHAR(255),
+    cover_image VARCHAR(255),
+    year INTEGER,
+    first_found_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_found_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    occurrences INTEGER DEFAULT 1
+);

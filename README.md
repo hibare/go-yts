@@ -41,9 +41,8 @@ services:
     hostname: go-yts
     restart: always
     environment:
-      - SCHEDULE=0 */4 * * *
-      - DATA_DIR=/data
-      - HISTORY_FILE=history.json
+      - GO_YTS_SCHEDULE=0 */4 * * *
+      - GO_YTS_DATA_DIR=/data
     volumes:
         - go-yts:/data
 volumes:
@@ -54,14 +53,13 @@ volumes:
 
 | Variable                 | Description                                         | Default Value  |
 | ------------------------ | --------------------------------------------------- | -------------- |
-| SCHEDULE                 | Internal cron schedule. Uses standard cron notation | 0 \/4 \* \* \* |
-| DATA_DIR                 | Directory to store history file                     | /data          |
-| HISTORY_FILE             | History filename                                    | history.json   |
-| HTTP_REQUEST_TIMEOUT     | Request timeout value for scrapper                  | 60 Seconds     |
-| NOTIFIER_DISCORD_WEBHOOK | Discord notification webhook                        | -              |
-| NOTIFIER_DISCORD_ENABLED | Discord notification status                         | false          |
-| LOG_LEVEL                | Log Level (INFO, ERROR, WARN, DEBUG)                | INFO           |
-| LOG_MODE                 | Log mode (PRETTY, JSON)                             | PRETTY         |
+| GO_YTS_SCHEDULE                 | Internal cron schedule. Uses standard cron notation | 0 \/4 \* \* \* |
+| GO_YTS_DATA_DIR                 | Directory to store db files                     | /data          |
+| GO_YTS_HTTP_REQUEST_TIMEOUT     | Request timeout value for scrapper                  | 60 Seconds     |
+| GO_YTS_NOTIFIER_DISCORD_WEBHOOK | Discord notification webhook                        | -              |
+| GO_YTS_NOTIFIER_DISCORD_ENABLED | Discord notification status                         | false          |
+| GO_YTS_LOG_LEVEL                | Log Level (INFO, ERROR, WARN, DEBUG)                | INFO           |
+| GO_YTS_LOG_MODE                 | Log mode (PRETTY, JSON)                             | PRETTY         |
 
 ## Notifications
 

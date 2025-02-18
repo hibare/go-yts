@@ -13,24 +13,17 @@ type HTTPConfig struct {
 	RequestTimeout time.Duration
 }
 
-type NotifierSlackConfig struct {
-	Enabled bool
-	Webhook string
-}
-
 type NotifierDiscordConfig struct {
 	Enabled bool
 	Webhook string
 }
 
 type NotifierConfig struct {
-	Slack   NotifierSlackConfig
 	Discord NotifierDiscordConfig
 }
 
 type StorageConfig struct {
-	DataDir     string
-	HistoryFile string
+	DataDir string
 }
 
 type LoggerConfig struct {
@@ -51,27 +44,22 @@ var Current *Config
 func LoadConfig() {
 	env.Load()
 	Current = &Config{
-		Schedule: env.MustString("SCHEDULE", constants.DefaultSchedule),
+		Schedule: env.MustString("GO_YTS_SCHEDULE", constants.DefaultSchedule),
 		StorageConfig: StorageConfig{
-			DataDir:     env.MustString("DATA_DIR", constants.DefaultDataDir),
-			HistoryFile: env.MustString("HISTORY_FILE", constants.DefaultHistoryFilename),
+			DataDir: env.MustString("GO_YTS_DATA_DIR", constants.DefaultDataDir),
 		},
 		NotifierConfig: NotifierConfig{
-			Slack: NotifierSlackConfig{
-				Enabled: env.MustBool("NOTIFIER_SLACK_ENABLED", false),
-				Webhook: env.MustString("NOTIFIER_SLACK_WEBHOOK", ""),
-			},
 			Discord: NotifierDiscordConfig{
-				Enabled: env.MustBool("NOTIFIER_DISCORD_ENABLED", false),
-				Webhook: env.MustString("NOTIFIER_DISCORD_WEBHOOK", ""),
+				Enabled: env.MustBool("GO_YTS_NOTIFIER_DISCORD_ENABLED", false),
+				Webhook: env.MustString("GO_YTS_NOTIFIER_DISCORD_WEBHOOK", ""),
 			},
 		},
 		HTTPConfig: HTTPConfig{
-			RequestTimeout: env.MustDuration("HTTP_REQUEST_TIMEOUT", constants.DefaultRequestTimeout),
+			RequestTimeout: env.MustDuration("GO_YTS_HTTP_REQUEST_TIMEOUT", constants.DefaultRequestTimeout),
 		},
 		LoggerConfig: LoggerConfig{
-			Level: env.MustString("LOG_LEVEL", commonLogger.DefaultLoggerLevel),
-			Mode:  env.MustString("LOG_MODE", commonLogger.DefaultLoggerMode),
+			Level: env.MustString("GO_YTS_LOG_LEVEL", commonLogger.DefaultLoggerLevel),
+			Mode:  env.MustString("GO_YTS_LOG_MODE", commonLogger.DefaultLoggerMode),
 		},
 	}
 
@@ -87,9 +75,5 @@ func LoadConfig() {
 
 	if Current.NotifierConfig.Discord.Webhook == "" {
 		Current.NotifierConfig.Discord.Enabled = false
-	}
-
-	if Current.NotifierConfig.Slack.Webhook == "" {
-		Current.NotifierConfig.Slack.Enabled = false
 	}
 }
