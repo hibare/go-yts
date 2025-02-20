@@ -7,17 +7,24 @@ FROM base AS build
 
 WORKDIR /src/
 
-RUN apk --update add --no-cache ca-certificates openssl git tzdata && \
-    update-ca-certificates
+# Add only necessary build dependencies for CGO and SQLite
+RUN apk --update add --no-cache \
+    gcc \
+    musl-dev \
+    sqlite-dev
 
 COPY . /src/
 
-RUN CGO_ENABLED=0 go build -o /bin/go_yts ./cmd/yts/main.go
+# Enable CGO and build
+RUN CGO_ENABLED=1 go build -o /bin/go_yts ./cmd/yts/main.go
 
 # Generate final image
-FROM scratch
+FROM alpine:latest
 
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+# Install CA certificates and SQLite runtime dependencies
+RUN apk --no-cache add \
+    ca-certificates \
+    sqlite-libs
 
 COPY --from=build /bin/go_yts /bin/go_yts
 

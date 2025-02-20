@@ -156,6 +156,16 @@ func main() {
 	config.LoadConfig()
 	slog.InfoContext(ctx, "Config", "cron", config.Current.Schedule, "request_timeout", config.Current.HTTPConfig.RequestTimeout, "data_dir", config.Current.StorageConfig.DataDir)
 
+	// Ensure data dir is present / create it
+	if _, err := os.Stat(config.Current.StorageConfig.DataDir); os.IsNotExist(err) {
+		slog.InfoContext(ctx, "Creating data dir", "data_dir", config.Current.StorageConfig.DataDir)
+		if err := os.MkdirAll(config.Current.StorageConfig.DataDir, 0755); err != nil {
+			slog.ErrorContext(ctx, "Failed to create data dir", "data_dir", config.Current.StorageConfig.DataDir, "error", err)
+			os.Exit(1)
+		}
+	}
+
+	// Migrate DB
 	slog.InfoContext(ctx, "Migrating DB")
 	if err := db.Migrate(ctx); err != nil {
 		slog.ErrorContext(ctx, "Failed to migrate DB", "error", err)
