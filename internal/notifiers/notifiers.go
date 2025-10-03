@@ -36,7 +36,14 @@ func Discord(ctx context.Context, movies []db.Movies) {
 			},
 		}
 
-		if err := message.Send(config.Current.NotifierConfig.Discord.Webhook); err != nil {
+		client, err := discord.NewClient(discord.Options{
+			WebhookURL: config.Current.NotifierConfig.Discord.Webhook,
+		})
+		if err != nil {
+			slog.ErrorContext(ctx, "Failed to create Discord client", "error", err)
+			return
+		}
+		if err := client.Send(ctx, &message); err != nil {
 			slog.ErrorContext(ctx, "Failed to send Discord notification", "error", err)
 		} else {
 			slog.InfoContext(ctx, "Discord notification sent", "movie", v.Title)

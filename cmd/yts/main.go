@@ -35,7 +35,7 @@ func ConstructURL(baseUrl *url.URL, refUrl string) (string, error) {
 }
 
 func ticker(ctx context.Context) {
-	ctx = context.WithValue(ctx, commonContext.ContextKey("run_id"), uuid.NewString())
+	ctx = context.WithValue(ctx, commonContext.Key("run_id"), uuid.NewString())
 
 	slog.InfoContext(ctx, "[Start] Scraper task")
 
