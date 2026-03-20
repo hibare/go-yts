@@ -6,7 +6,7 @@ require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
-	github.com/hibare/GoCommon/v2 v2.30.0
+	github.com/hibare/GoCommon/v2 v2.31.0
 	github.com/stretchr/testify v1.11.1
 	gorm.io/gorm v1.31.1
 )
