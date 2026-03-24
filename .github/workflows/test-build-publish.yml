@@ -27,6 +27,11 @@ jobs:
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))}}
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
       - name: Goreleaser
         uses: hibare/.github/github/shared-workflows/goreleaser@754f2100fbd786eeee38c1261161b6e68a27f92a # v0.7.0
         with:
@@ -44,6 +49,11 @@ jobs:
       id-token: write # For cosign
       packages: write # For GHCR
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4.1.1
 
