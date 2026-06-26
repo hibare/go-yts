@@ -33,7 +33,7 @@ jobs:
           egress-policy: audit
 
       - name: Goreleaser
-        uses: hibare/.github/github/shared-workflows/goreleaser@754f2100fbd786eeee38c1261161b6e68a27f92a # v0.7.0
+        uses: hibare/.github/github/shared-workflows/goreleaser@ec61c90a75c7438d3fa683fffffd83908d1e7447 # v0.7.0
         with:
           args: ${{ github.event_name == 'pull_request' && 'release --skip=sign,publish --snapshot --clean' || 'release --clean' }}
           sign: false
@@ -55,7 +55,7 @@ jobs:
           egress-policy: audit
 
       - name: Checkout
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4.1.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4.1.1
 
       - name: Set Metadata
         id: set-metadata
@@ -92,7 +92,7 @@ jobs:
         shell: bash
 
       - name: image-build-publish
-        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@754f2100fbd786eeee38c1261161b6e68a27f92a # v0.9.0
+        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@ec61c90a75c7438d3fa683fffffd83908d1e7447 # v0.10.0
         with:
           image_names: ${{ steps.set-metadata.outputs.docker_image_names }}
           tags: ${{ steps.set-metadata.outputs.docker_tags }}
