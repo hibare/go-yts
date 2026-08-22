@@ -1,6 +1,6 @@
 module github.com/hibare/go-yts
 
-go 1.25.1
+go 1.27.0
 
 require (
 	github.com/go-co-op/gocron v1.37.0
