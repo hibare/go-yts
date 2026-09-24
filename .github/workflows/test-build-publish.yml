@@ -28,12 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           egress-policy: audit
 
       - name: Goreleaser
-        uses: hibare/.github/github/shared-workflows/goreleaser@ec61c90a75c7438d3fa683fffffd83908d1e7447 # v0.7.0
+        uses: hibare/.github/github/shared-workflows/goreleaser@f2ff32dea70db639092f5927623f59ed83099cec # v0.16.0
         with:
           args: ${{ github.event_name == 'pull_request' && 'release --skip=sign,publish --snapshot --clean' || 'release --clean' }}
           sign: false
@@ -50,12 +50,12 @@ jobs:
       packages: write # For GHCR
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           egress-policy: audit
 
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4.1.1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set Metadata
         id: set-metadata
@@ -92,7 +92,7 @@ jobs:
         shell: bash
 
       - name: image-build-publish
-        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@ec61c90a75c7438d3fa683fffffd83908d1e7447 # v0.10.0
+        uses: hibare/.github/github/shared-workflows/docker-image-build-publish@f2ff32dea70db639092f5927623f59ed83099cec # v0.16.0
         with:
           image_names: ${{ steps.set-metadata.outputs.docker_image_names }}
           tags: ${{ steps.set-metadata.outputs.docker_tags }}
