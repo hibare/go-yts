@@ -1,3 +1,4 @@
+# Managed by Axon; manual edits will be overwritten.
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions
@@ -7,9 +8,10 @@ updates:
       interval: "monthly"
       day: "friday"
       time: "00:30"
+      timezone: "UTC"
     target-branch: "main"
     cooldown:
-      default-days: 10
+      default-days: 5
     assignees:
       - "hibare"
     groups:
@@ -24,13 +26,13 @@ updates:
       interval: "monthly"
       day: "friday"
       time: "00:30"
+      timezone: "UTC"
     target-branch: "main"
     cooldown:
-      default-days: 10
+      default-days: 5
     assignees:
       - "hibare"
     allow:
-      # Allow only direct updates for
       - dependency-type: "direct"
     groups:
       go:
@@ -44,13 +46,32 @@ updates:
       interval: "monthly"
       day: "friday"
       time: "00:30"
+      timezone: "UTC"
     target-branch: "main"
     cooldown:
-      default-days: 10
+      default-days: 5
     assignees:
       - "hibare"
     groups:
       docker:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for Docker Compose
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "friday"
+      time: "00:30"
+      timezone: "UTC"
+    target-branch: "main"
+    cooldown:
+      default-days: 5
+    assignees:
+      - "hibare"
+    groups:
+      docker-compose:
         patterns:
           - "*"
 
@@ -61,9 +82,10 @@ updates:
       interval: "monthly"
       day: "friday"
       time: "00:30"
+      timezone: "UTC"
     target-branch: "main"
     cooldown:
-      default-days: 10
+      default-days: 5
     assignees:
       - "hibare"
     groups:
